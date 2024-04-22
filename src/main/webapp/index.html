@@ -36,7 +36,7 @@
           <td><a href="/api/jwks">/api/jwks</a></td>
         </tr>
         <tr>
-          <td valign="top">Configuration Endpoint</td>
+          <td valign="top">Discovery Endpoint</td>
           <td><a href="/.well-known/openid-configuration">/.well-known/openid-configuration</a></td>
         </tr>
         <tr>
@@ -57,7 +57,27 @@
         </tr>
         <tr>
           <td valign="top">Grant Management Endpoint</td>
-          <td>/api/gm</td>
+          <td>/api/gm/{grantId}</td>
+        </tr>
+        <tr>
+          <td valign="top">Federation Configuration Endpoint</td>
+          <td><a href="/.well-known/openid-federation">/.well-known/openid-federation</a></td>
+        </tr>
+        <tr>
+          <td valign="top">Federation Registration Endpoint</td>
+          <td>/api/federation/register</td>
+        </tr>
+        <tr>
+          <td valign="top">Credential Issuer Metadata Endpoint</td>
+          <td><a href="/.well-known/openid-credential-issuer">/.well-known/openid-credential-issuer</a></td>
+        </tr>
+        <tr>
+          <td valign="top">JWT Issuer Metadata Endpoint</td>
+          <td><a href="/.well-known/jwt-issuer">/.well-known/jwt-issuer</a></td>
+        </tr>
+        <tr>
+          <td valign="top">JWT VC Issuer Metadata Endpoint</td>
+          <td><a href="/.well-known/jwt-vc-issuer">/.well-known/jwt-vc-issuer</a></td>
         </tr>
       </tbody>
     </table>
@@ -86,7 +106,7 @@
       <li>
         <a href="https://www.authlete.com/" target="_blank">Authlete</a>
         is an OAuth 2.0 &amp; OpenID Connect implementation on cloud
-        (<a href="https://www.authlete.com/documents/overview" target="_blank">overview</a>).
+        (<a href="https://www.authlete.com/developers/overview/" target="_blank">overview</a>).
       <li>
         This authorization server is written using Authlete's open source libraries.
       <li>
