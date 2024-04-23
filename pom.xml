@@ -121,7 +121,7 @@
       <groupId>com.nimbusds</groupId>
       <artifactId>oauth2-oidc-sdk</artifactId>
       <classifier>jdk8</classifier>
-      <version>9.22</version>
+      <version>10.7.1</version>
     </dependency>
 
     <dependency>
