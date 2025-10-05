@@ -12,7 +12,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <authlete.java.common.version>4.3</authlete.java.common.version>
+    <authlete.java.common.version>4.23</authlete.java.common.version>
     <authlete.java.jaxrs.version>2.79</authlete.java.jaxrs.version>
     <authlete.cbor.version>1.18</authlete.cbor.version>
     <javax.servlet-api.version>3.0.1</javax.servlet-api.version>
@@ -127,13 +127,13 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-core</artifactId>
-      <version>1.2.13</version>
+      <version>1.5.19</version>
     </dependency>
 
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.2.13</version>
+      <version>1.5.14</version>
     </dependency>
 
     <dependency>
