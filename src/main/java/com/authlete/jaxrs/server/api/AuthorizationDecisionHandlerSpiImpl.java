@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Authlete, Inc.
+ * Copyright (C) 2016-2025 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package com.authlete.jaxrs.server.api;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.ws.rs.WebApplicationException;
@@ -104,6 +105,12 @@ class AuthorizationDecisionHandlerSpiImpl extends AuthorizationDecisionHandlerSp
 
 
     /**
+     * The session ID of the user's authentication session.
+     */
+    private String mSessionId;
+
+
+    /**
      * Constructor with a request from the form in the authorization page.
      *
      * <p>
@@ -113,7 +120,8 @@ class AuthorizationDecisionHandlerSpiImpl extends AuthorizationDecisionHandlerSp
      */
     public AuthorizationDecisionHandlerSpiImpl(
             MultivaluedMap<String, String> parameters, User user,
-            Date userAuthenticatedAt, String idTokenClaims, String[] acrs, Client client)
+            Date userAuthenticatedAt, String idTokenClaims, String[] acrs,
+            Client client, String sessionId)
     {
         // If the end-user clicked the "Authorize" button, "authorized"
         // is contained in the request.
@@ -158,6 +166,9 @@ class AuthorizationDecisionHandlerSpiImpl extends AuthorizationDecisionHandlerSp
 
         // The client associated with the request.
         mClient = client;
+
+        // The session ID of the user's authentication session.
+        mSessionId = sessionId;
     }
 
 
@@ -254,7 +265,7 @@ class AuthorizationDecisionHandlerSpiImpl extends AuthorizationDecisionHandlerSp
 
         try
         {
-            return (Map<String, Object>)Utils.fromJson(json, Map.class);
+            return Utils.fromJson(json, Map.class);
         }
         catch (Exception e)
         {
@@ -274,6 +285,12 @@ class AuthorizationDecisionHandlerSpiImpl extends AuthorizationDecisionHandlerSp
             // the authorization server embeds the value of the claim
             // in an ID token.
             return getOpenBankingIntentIdFromIdTokenClaims(claimName);
+        }
+
+        if ("txn".equals(claimName)) {
+            // txn claim as used in ConnectID Australia:
+            // https://cdn.connectid.com.au/specifications/digitalid-identity-assurance-profile-06.html
+            return UUID.randomUUID();
         }
 
         // If the name indicates that the claim is a transformed claim.
@@ -475,5 +492,12 @@ class AuthorizationDecisionHandlerSpiImpl extends AuthorizationDecisionHandlerSp
         // Build the content of "verified_claims" which meets conditions
         // of the request from the available datasets.
         return new VerifiedClaimsBuilder(verifiedClaimsRequest, datasets).build();
+    }
+
+
+    @Override
+    public String getSessionId()
+    {
+        return mSessionId;
     }
 }

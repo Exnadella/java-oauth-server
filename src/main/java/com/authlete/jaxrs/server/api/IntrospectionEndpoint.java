@@ -77,11 +77,25 @@ public class IntrospectionEndpoint extends BaseIntrospectionEndpoint
         BasicCredentials credentials = BasicCredentials.parse(authorization);
 
         // Fetch the information about the resource server from DB.
-        ResourceServerEntity rsEntity = ResourceServerDao.get(credentials.getUserId());
+        ResourceServerEntity rsEntity = getResourceServer(credentials);
 
         // If failed to authenticate the resource server.
         if (authenticateResourceServer(rsEntity, credentials) == false)
         {
+            // RFC 9701 mandates a "400 Bad Request" for unauthenticated introspection
+            // requests as follows:
+            //
+            //   Note: An AS compliant with this specification MUST refuse to serve
+            //   introspection requests that don't authenticate the caller and return
+            //   an HTTP status code 400. This is done to ensure token data is released
+            //   to legitimate recipients only and prevent downgrading to [RFC7662]
+            //   behavior (see Section 8.2).
+            //
+            // However, we return "401 Unauthorized" instead here.
+            // While RFC 7662 leaves authentication details out of scope, we consider
+            // 401 the semantically correct HTTP status for API caller authentication
+            // failures and the standard behavior for protected endpoints.
+
             // Return "401 Unauthorized".
             return Response.status(Status.UNAUTHORIZED).build();
         }
@@ -107,6 +121,17 @@ public class IntrospectionEndpoint extends BaseIntrospectionEndpoint
                 .setPublicKeyForEncryption(rsEntity.getPublicKeyForIntrospectionResponseEncryption())
                 .setSharedKeyForSign(rsEntity.getSharedKeyForIntrospectionResponseSign())
                 .setSharedKeyForEncryption(rsEntity.getSharedKeyForIntrospectionResponseEncryption());
+    }
+
+
+    private ResourceServerEntity getResourceServer(BasicCredentials credentials)
+    {
+        if (credentials == null)
+        {
+            return null;
+        }
+
+        return ResourceServerDao.get(credentials.getUserId());
     }
 
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Authlete, Inc.
+ * Copyright (C) 2016-2025 Authlete, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 package com.authlete.jaxrs.server.api;
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -44,6 +46,22 @@ import com.authlete.jaxrs.spi.AuthorizationDecisionHandlerSpi;
 @Path("/api/authorization/decision")
 public class AuthorizationDecisionEndpoint extends BaseAuthorizationDecisionEndpoint
 {
+    private static void addTxnToClaimNames(Params params) {
+        // txn claim is always required by ConnectID Australia
+        // https://cdn.connectid.com.au/specifications/digitalid-identity-assurance-profile-06.html
+        String[] claimNames = params.getClaimNames();
+        if (claimNames == null) {
+            // if no claims were requested it can't be a connectid au request
+            return;
+        }
+        // txn will now be returned for any requests that request oidc claims - as our AS is multipurpose there's no
+        // real good way to identify the ecosystem variant being tested and returning an random uuid is harmless
+        ArrayList<String> claimNamesArray = new ArrayList<>(Arrays.asList(claimNames));
+        claimNamesArray.add("txn");
+
+        params.setClaimNames(claimNamesArray.toArray(new String[0]));
+    }
+
     /**
      * Process a request from the form in the authorization page.
      *
@@ -83,13 +101,16 @@ public class AuthorizationDecisionEndpoint extends BaseAuthorizationDecisionEndp
         User user     = ProcessingUtil.getUser(session, parameters);
         Date authTime = (Date)    session.getAttribute("authTime");
 
+        addTxnToClaimNames(params);
+
         // Claims requested to be embedded in the ID token.
         String idTokenClaims = (params != null) ? params.getIdTokenClaims() : null;
 
         // Implementation of AuthorizationDecisionHandlerSpi.
         AuthorizationDecisionHandlerSpi spi =
             new AuthorizationDecisionHandlerSpiImpl(
-                parameters, user, authTime, idTokenClaims, acrs, client);
+                parameters, user, authTime, idTokenClaims, acrs, client,
+                session.getId());
 
         // Handle the end-user's decision.
         return handle(AuthleteApiFactory.getDefaultApi(), spi, params);
