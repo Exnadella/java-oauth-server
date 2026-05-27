@@ -40,6 +40,7 @@
         com.authlete.jaxrs.server.api.vci.BatchCredentialEndpoint,
         com.authlete.jaxrs.server.api.vci.CredentialEndpoint,
         com.authlete.jaxrs.server.api.vci.CredentialMetadataEndpoint,
+        com.authlete.jaxrs.server.api.vci.CredentialNonceEndpoint,
         com.authlete.jaxrs.server.api.vci.CredentialJwtIssuerEndpoint,
         com.authlete.jaxrs.server.api.vci.DeferredCredentialEndpoint,
         com.authlete.jaxrs.server.api.vci.CredentialOfferEndpoint,
@@ -68,7 +69,9 @@
         com.authlete.jaxrs.server.api.obb.ConsentsEndpoint,
         com.authlete.jaxrs.server.api.obb.ResourcesEndpoint,
         org.glassfish.jersey.moxy.json.MoxyJsonFeature,
-        org.glassfish.jersey.server.mvc.jsp.JspMvcFeature
+        org.glassfish.jersey.server.mvc.jsp.JspMvcFeature,
+        com.authlete.jaxrs.server.decorator.FapiInteractionIdResponseFilter,
+        com.authlete.jaxrs.server.api.attestation.AttestationChallengeEndpoint,
       </param-value>
     </init-param>
 
